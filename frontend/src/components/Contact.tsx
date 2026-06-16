@@ -1,7 +1,7 @@
 import { motion, useInView } from 'framer-motion'
 import { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { standardSchemaResolver } from '@hookform/resolvers/standard-schema'
 import { z } from 'zod'
 import Container from './Container'
 
@@ -40,7 +40,7 @@ export default function Contact() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle')
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm({
-    resolver: zodResolver(schema),
+    resolver: standardSchemaResolver(schema),
   })
 
   const onSubmit = async (data: FormData) => {
