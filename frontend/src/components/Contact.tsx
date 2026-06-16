@@ -39,7 +39,7 @@ export default function Contact() {
   const inView = useInView(ref, { once: true, margin: '-80px' })
   const [status, setStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle')
 
-  const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>({
+  const { register, handleSubmit, formState: { errors }, reset } = useForm({
     resolver: zodResolver(schema),
   })
 
