@@ -7,8 +7,8 @@ export default function MaiuanLogo() {
   const [phase, setPhase] = useState(0);
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase(1), 450);
-    const t2 = setTimeout(() => setPhase(2), 950);
+    const t1 = setTimeout(() => setPhase(1), 1200);
+    const t2 = setTimeout(() => setPhase(2), 2400);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
@@ -38,7 +38,7 @@ export default function MaiuanLogo() {
               x: key < 2 ? -10 : key > 3 ? 10 : 0,
             }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ type: "spring", stiffness: 480, damping: 32 }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             style={{ display: "inline-block" }}
           >
             {char}
