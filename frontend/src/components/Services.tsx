@@ -65,12 +65,6 @@ export default function Services() {
                   : 'border-[var(--border)] bg-[var(--surface)] hover:border-white/20 transition-colors duration-300'
               }`}
             >
-              {p.highlight && (
-                <span className="absolute -top-3 left-6 bg-[var(--accent)] text-black text-[10px] font-bold px-3 py-1 rounded-full tracking-wide uppercase">
-                  Mi recomendación
-                </span>
-              )}
-
               {/* Header */}
                 <div className="px-4 pt-4 pb-2 border-b border-[var(--border)]">
                   <h3 className="text-base font-bold">{p.name}</h3>
