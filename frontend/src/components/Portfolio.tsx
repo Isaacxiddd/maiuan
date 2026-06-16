@@ -1,0 +1,100 @@
+import { motion, useInView } from 'framer-motion'
+import { useRef } from 'react'
+import Container from './Container'
+
+const projects = [
+  {
+    rubro: 'Odontología',
+    name: 'Clínica Dental Norte',
+    desc: 'Landing orientada a reservas de primera consulta. WhatsApp + formulario. Duplicó las consultas en el primer mes.',
+    tags: ['React', 'Tailwind', 'NestJS'],
+    bg: 'linear-gradient(135deg,#0f1a2e 0%,#0a1020 100%)',
+    emoji: '🦷',
+  },
+  {
+    rubro: 'Arquitectura',
+    name: 'Estudio Bauwerk',
+    desc: 'Portfolio + captación de proyectos. Diseño minimalista premium. Tres proyectos nuevos en el primer trimestre.',
+    tags: ['React', 'Framer Motion'],
+    bg: 'linear-gradient(135deg,#0f2e0f 0%,#081508 100%)',
+    emoji: '🏛️',
+  },
+  {
+    rubro: 'Kinesiología',
+    name: 'Centro KinesioBA',
+    desc: 'Conversión de tráfico orgánico en turnos. SEO básico incluido. La agenda se llenó en tres semanas.',
+    tags: ['React', 'SEO', 'Analytics'],
+    bg: 'linear-gradient(135deg,#2e0f0f 0%,#180808 100%)',
+    emoji: '💪',
+  },
+]
+
+export default function Portfolio() {
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-100px' })
+
+  return (
+    <section id="portfolio" className="py-10 md:py-12">
+      <Container>
+        <motion.div
+          ref={ref}
+          initial={{ opacity: 0, y: 28 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+          className="mb-6 text-center"
+        >
+          <span className="text-[var(--accent)] text-xs font-semibold tracking-[0.2em] uppercase">Portfolio</span>
+          <h2 className="text-[clamp(2rem,4vw,3rem)] font-extrabold mt-4">Algunos trabajos.</h2>
+          <p className="text-[var(--text-muted)] mt-4 text-base font-light max-w-md mx-auto">
+            Proyectos reales, resultados concretos.
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
+          {projects.map((p, i) => (
+            <motion.article
+              key={p.name}
+              initial={{ opacity: 0, y: 36 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: i * 0.12, duration: 0.6 }}
+              className="rounded-xl border border-[var(--border)] overflow-hidden hover:border-white/25 transition-colors duration-300 flex flex-col"
+            >
+              <div
+                className="h-28 flex items-center justify-center text-4xl shrink-0"
+                style={{ background: p.bg }}
+              >
+                {p.emoji}
+              </div>
+
+              <div className="p-4 flex flex-col flex-1">
+                <span className="text-[var(--accent)] text-[9px] font-semibold tracking-[0.2em] uppercase">{p.rubro}</span>
+                <h3 className="font-bold text-sm mt-1.5 text-white">{p.name}</h3>
+                <p className="text-[var(--text-muted)] text-xs mt-1.5 leading-relaxed flex-1">{p.desc}</p>
+
+                <div className="flex gap-1.5 mt-3 flex-wrap">
+                  {p.tags.map(t => (
+                    <span
+                      key={t}
+                      className="text-[9px] font-medium bg-white/10 text-white/80 px-2 py-0.5 rounded-full border border-white/15"
+                    >
+                      {t}
+                    </span>
+                  ))}
+                </div>
+
+                <motion.a
+                  href="#contacto"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="mt-3 flex items-center justify-center gap-1.5 text-xs font-semibold bg-[var(--accent)] text-black py-2.5 rounded-full hover:bg-white transition-colors duration-200 cursor-pointer"
+                >
+                  Ver proyecto ↗
+                </motion.a>
+              </div>
+            </motion.article>
+          ))}
+        </div>
+      </Container>
+    </section>
+  )
+}
