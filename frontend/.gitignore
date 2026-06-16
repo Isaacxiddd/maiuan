@@ -1,4 +1,5 @@
 .env
+reports/
 
 # Logs
 logs

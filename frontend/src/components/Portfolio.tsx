@@ -4,12 +4,11 @@ import Container from './Container'
 
 const projects = [
   {
-    rubro: 'Odontología',
-    name: 'Clínica Dental Norte',
-    desc: 'Landing orientada a reservas de primera consulta. WhatsApp + formulario. Duplicó las consultas en el primer mes.',
-    tags: ['React', 'Tailwind', 'NestJS'],
-    bg: 'linear-gradient(135deg,#0f1a2e 0%,#0a1020 100%)',
-    emoji: '🦷',
+    rubro: 'Gastronomía',
+    name: 'Guayafood',
+    desc: 'Landing para delivery de comida casera. Diseño apetitoso, WhatsApp integrado, pedidos directos. Dueño cocina, nosotros le hicimos la web.',
+    tags: ['React', 'Tailwind', 'WhatsApp API'],
+    image: '/guayafood-frame.jpg',
   },
   {
     rubro: 'Arquitectura',
@@ -59,12 +58,18 @@ export default function Portfolio() {
               transition={{ delay: i * 0.12, duration: 0.6 }}
               className="rounded-xl border border-[var(--border)] overflow-hidden hover:border-white/25 transition-colors duration-300 flex flex-col"
             >
-              <div
-                className="h-28 flex items-center justify-center text-4xl shrink-0"
-                style={{ background: p.bg }}
-              >
-                {p.emoji}
-              </div>
+              {p.image ? (
+                <div className="h-28 shrink-0 overflow-hidden">
+                  <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+                </div>
+              ) : (
+                <div
+                  className="h-28 flex items-center justify-center text-4xl shrink-0"
+                  style={{ background: p.bg }}
+                >
+                  {p.emoji}
+                </div>
+              )}
 
               <div className="p-4 flex flex-col flex-1">
                 <span className="text-[var(--accent)] text-[9px] font-semibold tracking-[0.2em] uppercase">{p.rubro}</span>
