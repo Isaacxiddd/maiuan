@@ -110,7 +110,7 @@ export default function Services() {
         <p className="text-center text-sm text-[var(--text-muted)] mt-3 pb-1">
           ¿No estás seguro cuál te conviene?{" "}
           <a
-            href={`https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER}?text=Hola%20maiuan%2C%20quiero%20saber%20m%C3%A1s%20sobre%20sus%20servicios`}
+            href={`https://wa.me/${import.meta.env.VITE_WHATSAPP_NUMBER || '5491123952146'}?text=Hola%20maiuan%2C%20quiero%20saber%20m%C3%A1s%20sobre%20sus%20servicios`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-[#25D366] hover:text-white underline underline-offset-2 transition-colors"

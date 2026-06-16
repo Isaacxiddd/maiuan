@@ -6,8 +6,8 @@ import { z } from 'zod'
 import Container from './Container'
 
 const WEB3FORMS_KEY = import.meta.env.VITE_WEB3FORMS_KEY as string
-const CONTACT_EMAIL = import.meta.env.VITE_CONTACT_EMAIL as string
-const WHATSAPP = import.meta.env.VITE_WHATSAPP_NUMBER as string
+const CONTACT_EMAIL = import.meta.env.VITE_CONTACT_EMAIL || 'isaacjosegarciamarquez@gmail.com'
+const WHATSAPP = import.meta.env.VITE_WHATSAPP_NUMBER || '5491123952146'
 const WA_LINK = `https://wa.me/${WHATSAPP}?text=Hola%20maiuan%2C%20quiero%20saber%20m%C3%A1s%20sobre%20sus%20servicios`
 
 const schema = z.object({
