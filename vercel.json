@@ -1,6 +1,6 @@
 {
   "buildCommand": "pnpm --filter frontend build",
   "outputDirectory": "frontend/dist",
-  "installCommand": "pnpm install",
+  "installCommand": "pnpm install --filter frontend",
   "framework": null
 }
