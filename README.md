@@ -1,57 +1,69 @@
 # maiuan
 
-Landing page para estudio de diseño web orientado a negocios argentinos. Construida para convertir visitas en consultas.
+Landing page para [maiuan.ar](https://maiuan.ar) — estudio de diseño web orientado a negocios argentinos. Construida para convertir visitas en consultas.
+
+Diseñada con foco en conversión: cada sección empuja al usuario al formulario de contacto o WhatsApp. Incluye animaciones sutiles con Framer Motion, flip card 3D en el hero, y un formulario funcional via Web3Forms.
 
 ## Stack
 
-- **Frontend:** React 19 + TypeScript + Vite + Tailwind CSS v4
-- **Animaciones:** Framer Motion + Anime.js
-- **Formulario:** React Hook Form + Zod v4
-- **Deploy:** Vercel
-- **Backend (CI/métricas):** NestJS
+| Capa | Tecnología |
+|---|---|
+| **Frontend** | React 19 + TypeScript + Vite + Tailwind CSS v4 |
+| **Animaciones** | Framer Motion + Anime.js |
+| **Formulario** | React Hook Form + Zod |
+| **Tests** | Playwright (E2E) |
+| **Audit** | Lighthouse CI |
+| **Deploy** | Vercel |
+| **Backend** | NestJS (métricas) |
 
 ## Estructura
 
 ```
 maiuan/
-├── frontend/          # App React — lo que va a producción
+├── frontend/                    # App React — lo que va a producción
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── Services.tsx      # Pricing: Inicial / Crecimiento / Sistema
-│   │   │   ├── Portfolio.tsx     # Proyectos reales (Guayafood, etc.)
-│   │   │   ├── Contact.tsx       # Formulario vía Web3Forms
+│   │   │   ├── Hero.tsx         # Video + flip card 3D
+│   │   │   ├── Insight.tsx      # Señales de alerta
+│   │   │   ├── Solution.tsx     # Propuesta de valor
+│   │   │   ├── Services.tsx     # Pricing (3 planes)
+│   │   │   ├── Process.tsx      # Paso a paso
+│   │   │   ├── Portfolio.tsx    # Proyectos reales
+│   │   │   ├── Testimonials.tsx # Testimonios de clientes
+│   │   │   ├── Contact.tsx      # Formulario + WhatsApp + mail
+│   │   │   ├── Navbar.tsx       # Navegación sticky
+│   │   │   ├── Footer.tsx       # Footer
 │   │   │   ├── WhatsAppButton.tsx
-│   │   │   └── ...
-│   │   └── App.tsx               # Code splitting con React.lazy
-│   ├── lighthouse-audit.mjs      # Audit de performance local
+│   │   │   ├── Container.tsx
+│   │   │   ├── BgTexture.tsx
+│   │   │   └── MaiuanLogo.tsx
+│   │   └── App.tsx              # Code splitting con React.lazy
+│   ├── lighthouse-audit.mjs     # Audit de performance local
+│   ├── tests/                   # Tests E2E con Playwright
 │   └── vercel.json
-└── backend/           # NestJS — endpoint /lighthouse para métricas
+└── backend/                     # NestJS — endpoint /lighthouse
 ```
-
-## Variables de entorno
-
-Copiar `.env.example` a `.env` y completar:
-
-```env
-VITE_WEB3FORMS_KEY=      # clave de web3forms.com para el formulario
-VITE_CONTACT_EMAIL=      # email donde llegan los mensajes
-VITE_WHATSAPP_NUMBER=    # número sin + (ej: 5491123952146)
-```
-
-Si no se definen, el build usa los valores por defecto hardcodeados.
 
 ## Desarrollo
 
 ```bash
+cd frontend
 pnpm install
 pnpm dev
 ```
 
-## Build y preview
+## Build
 
 ```bash
 pnpm build
 pnpm preview
+```
+
+## Testing
+
+```bash
+pnpm test          # Playwright E2E
+pnpm test:ui       # Playwright UI mode
 ```
 
 ## Lighthouse
@@ -60,12 +72,29 @@ pnpm preview
 pnpm lighthouse
 ```
 
-Genera un reporte HTML en `reports/` y muestra scores en terminal. Requiere Chrome instalado en la ruta por defecto de Windows.
+Genera reporte HTML en `reports/`. Requiere Chrome instalado.
+
+## Variables de entorno
+
+Copiar `.env.example` → `.env`:
+
+```env
+VITE_WEB3FORMS_KEY=      # web3forms.com
+VITE_CONTACT_EMAIL=      # destino del formulario
+VITE_WHATSAPP_NUMBER=    # sin + (ej: 5491123952146)
+```
 
 ## Deploy
 
 ```bash
-vercel --prod --scope <team>
+vercel --prod
 ```
 
-Scores actuales en producción: Performance 95 · Accesibilidad 94 · Buenas prácticas 100 · SEO 92
+## Scores actuales
+
+| Métrica | Score |
+|---|---|
+| Performance | 95 |
+| Accesibilidad | 94 |
+| Buenas prácticas | 100 |
+| SEO | 92 |

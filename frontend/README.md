@@ -1,73 +1,49 @@
-# React + TypeScript + Vite
+# maiuan — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Landing page para estudio de diseño web. Construida con React 19 + TypeScript + Vite + Tailwind CSS v4.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **React 19** + TypeScript
+- **Vite** (build dev)
+- **Tailwind CSS v4**
+- **Framer Motion** + Anime.js (animaciones)
+- **React Hook Form** + Zod (formulario)
+- **Web3Forms** (backend del formulario)
+- **Playwright** (tests E2E)
+- **Lighthouse** (audit de performance)
 
-## React Compiler
+## Scripts
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+pnpm dev           # desarrollo
+pnpm build         # build producción
+pnpm preview       # preview del build
+pnpm lint          # ESLint
+pnpm lighthouse    # audit local (requiere Chrome)
+pnpm test          # tests E2E con Playwright
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Componentes
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+| Componente | Descripción |
+|---|---|
+| `Hero` | Hero con video + flip card 3D |
+| `Insight` | Señales de alerta (prueba social) |
+| `Solution` | Explicación del servicio |
+| `Services` | Pricing: Inicial / Crecimiento / Sistema |
+| `Process` | Paso a paso del servicio |
+| `Portfolio` | Proyectos realizados |
+| `Testimonials` | Testimonios de clientes |
+| `Contact` | Formulario + WhatsApp + mail |
+| `Navbar` | Navegación sticky |
+| `Footer` | Footer con links |
+| `WhatsAppButton` | Botón flotante de WhatsApp |
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Variables de entorno
+
+```env
+VITE_WEB3FORMS_KEY=       # clave de web3forms.com
+VITE_CONTACT_EMAIL=       # email de contacto
+VITE_WHATSAPP_NUMBER=     # número sin + (ej: 5491123952146)
 ```
