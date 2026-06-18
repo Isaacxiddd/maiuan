@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
 
 @layer base {
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -11,7 +10,7 @@
   --bg: #080808;
   --surface: #111111;
   --border: rgba(255,255,255,0.08);
-  --text-muted: rgba(255,255,255,0.45);
+  --text-muted: rgba(255,255,255,0.58);
 }
 
 html {
@@ -51,10 +50,11 @@ body::before {
   background-size: 128px;
 }
 
-h1, h2, h3, h4 {
-  font-family: 'Syne', sans-serif;
-  line-height: 1.05;
-  letter-spacing: -0.02em;
+@layer base {
+  h1, h2, h3, h4 {
+    line-height: 1.1;
+    letter-spacing: 0;
+  }
 }
 
 a { text-decoration: none; }

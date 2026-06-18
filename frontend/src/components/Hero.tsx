@@ -5,28 +5,27 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex flex-col justify-center overflow-hidden"
-      style={{ paddingTop: 'var(--nav-h)' }}
+      className="relative min-h-screen flex flex-col pt-[calc(var(--nav-h)+1rem)] md:pt-[calc(var(--nav-h)+2rem)]"
     >
-      <Container className="pt-16 pb-10 md:pt-20 md:pb-12 relative z-10 grid md:grid-cols-2 gap-10 md:gap-16 items-center">
+      <Container className="pt-6 pb-10 md:pt-10 md:pb-12 relative z-10 grid md:grid-cols-2 gap-10 md:gap-16 items-center">
         {/* Left: text */}
-        <div>
+        <div className="flex flex-col max-md:contents md:col-start-1 md:row-start-1">
           <motion.h1
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="text-[clamp(2rem,7vw,4.5rem)] leading-[0.95] tracking-[-0.03em] mb-4"
+            className="font-sans text-[clamp(2rem,8vw,4rem)] leading-[1.1] tracking-normal mb-4 font-extrabold"
           >
-            <span className="font-extrabold">Tu negocio</span><br />
+            <span className="text-[1.1em]">Tu negocio</span><br />
               <span className="font-medium text-hero">merece</span><br />
-              <span className="font-extrabold">más consultas.</span>
+              <span className="text-[1.1em]">más consultas.</span>
             </motion.h1>
 
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.7, duration: 0.6 }}
-            className="text-[var(--text-muted)] text-sm md:text-base mb-6 leading-relaxed font-light"
+            className="text-[var(--text-muted)] text-base mb-6 leading-relaxed font-light max-md:order-1"
           >
             <span className="text-white/90 font-medium">Guayafood</span> pasó de vender solo por Instagram a tener un sitio propio que cobra y ordena los pedidos solo.
           </motion.p>
@@ -35,13 +34,13 @@ export default function Hero() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.9, duration: 0.5 }}
-            className="flex gap-3 flex-wrap"
+            className="flex gap-3 flex-wrap justify-center md:justify-start max-md:order-3 max-md:mt-6"
           >
             <motion.a
               href="#contacto"
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
-              className="bg-[var(--accent)] text-black text-sm font-semibold px-7 py-3.5 rounded-full hover:bg-white transition-colors duration-200 cursor-pointer block"
+              className="bg-[var(--accent)] text-black text-sm md:text-base font-semibold px-7 py-3.5 rounded-full hover:bg-white transition-colors duration-200 cursor-pointer block"
             >
               Hablemos
             </motion.a>
@@ -49,7 +48,7 @@ export default function Hero() {
               href="#servicios"
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
-              className="border border-[var(--border)] text-white/70 text-sm px-7 py-3.5 rounded-md hover:border-white/30 hover:text-white transition-colors duration-200 cursor-pointer block"
+              className="border border-[var(--border)] text-white/70 text-sm md:text-base px-7 py-3.5 rounded-md hover:border-white/30 hover:text-white transition-colors duration-200 cursor-pointer block"
             >
               Ver servicios →
             </motion.a>
@@ -61,9 +60,9 @@ export default function Hero() {
           initial={{ opacity: 0, x: 40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.5, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          className="relative hidden md:block"
+          className="relative max-md:order-2 max-md:mt-6"
         >
-          <a href="https://guayafood.vercel.app/" target="_blank" rel="noopener noreferrer" className="block relative overflow-hidden rounded-2xl border border-white/[0.08] bg-black shadow-2xl group cursor-pointer">
+          <a href="https://guayafood.vercel.app/" target="_blank" rel="noopener noreferrer" aria-label="Ver sitio de Guayafood" className="block relative overflow-hidden rounded-2xl border border-white/[0.08] bg-black shadow-2xl group cursor-pointer">
             <div className="absolute inset-0 bg-white/0 group-hover:bg-white/[0.03] transition-colors duration-300 z-10 rounded-2xl" />
             <video
               autoPlay
