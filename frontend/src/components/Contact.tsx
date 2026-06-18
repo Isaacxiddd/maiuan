@@ -52,7 +52,7 @@ export default function Contact() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           access_key: WEB3FORMS_KEY,
-          email: CONTACT_EMAIL,
+          email: data.email,
           from_name: data.name,
           rubro: data.rubro,
           message: data.message,
