@@ -26,7 +26,7 @@ export default function Portfolio() {
           transition={{ duration: 0.6 }}
           className="mb-6 text-center"
         >
-          <span className="text-[var(--accent)] text-xs font-semibold tracking-[0.2em] uppercase">Portfolio</span>
+          <span className="text-[var(--accent)] text-xs font-semibold tracking-[0.2em] uppercase">Trabajos</span>
           <h2 className="text-[clamp(2rem,4vw,3rem)] font-extrabold mt-4">Algunos trabajos.</h2>
           <p className="text-[var(--text-muted)] mt-4 text-base font-light max-w-md mx-auto">
             Proyectos reales, resultados concretos.

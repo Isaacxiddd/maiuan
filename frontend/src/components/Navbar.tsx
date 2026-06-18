@@ -6,8 +6,8 @@ const NAV_H = 72
 
 const navLinks = [
   { label: 'Servicios', href: '#servicios' },
-  { label: 'Proceso', href: '#proceso' },
-  { label: 'Portfolio', href: '#portfolio' },
+  { label: '¿Qué hacemos?', href: '#proceso' },
+  { label: 'Trabajos', href: '#portfolio' },
   { label: 'Contacto', href: '#contacto' },
 ]
 
