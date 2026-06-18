@@ -38,6 +38,7 @@ export default function Contact() {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
   const [status, setStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle')
+  const [copied, setCopied] = useState(false)
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>({
     resolver: standardSchemaResolver(schema),
@@ -163,6 +164,15 @@ export default function Contact() {
               </svg>
               Escribime por WhatsApp
             </a>
+            <button
+              onClick={() => { navigator.clipboard.writeText(CONTACT_EMAIL); setCopied(true); setTimeout(() => setCopied(false), 2000) }}
+              className="flex items-center gap-2 border border-white/20 text-white/80 text-xs px-4 py-2 rounded-full hover:border-white/40 hover:text-white transition-colors duration-200 cursor-pointer"
+            >
+              <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+              </svg>
+              {copied ? '¡Copiado!' : 'Copiar email'}
+            </button>
             <a
               href={`mailto:${CONTACT_EMAIL}`}
               className="flex items-center gap-2 border border-white/20 text-white/80 text-xs px-4 py-2 rounded-full hover:border-white/40 hover:text-white transition-colors duration-200"
@@ -170,7 +180,7 @@ export default function Contact() {
               <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M22 6L12 13 2 6M4 4h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2z"/>
               </svg>
-              {CONTACT_EMAIL}
+              Enviar email
             </a>
           </div>
         </div>

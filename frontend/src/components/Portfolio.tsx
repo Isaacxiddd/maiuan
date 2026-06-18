@@ -10,22 +10,6 @@ const projects = [
     tags: ['React', 'Tailwind', 'WhatsApp API'],
     image: '/guayafood-frame.jpg',
   },
-  {
-    rubro: 'Arquitectura',
-    name: 'Estudio Bauwerk',
-    desc: 'Portfolio + captación de proyectos. Diseño minimalista premium. Tres proyectos nuevos en el primer trimestre.',
-    tags: ['React', 'Framer Motion'],
-    bg: 'linear-gradient(135deg,#0f2e0f 0%,#081508 100%)',
-    emoji: '🏛️',
-  },
-  {
-    rubro: 'Kinesiología',
-    name: 'Centro KinesioBA',
-    desc: 'Conversión de tráfico orgánico en turnos. SEO básico incluido. La agenda se llenó en tres semanas.',
-    tags: ['React', 'SEO', 'Analytics'],
-    bg: 'linear-gradient(135deg,#2e0f0f 0%,#180808 100%)',
-    emoji: '💪',
-  },
 ]
 
 export default function Portfolio() {
@@ -49,7 +33,7 @@ export default function Portfolio() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-4 items-stretch max-w-md mx-auto">
           {projects.map((p, i) => (
             <motion.article
               key={p.name}

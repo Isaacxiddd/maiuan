@@ -62,18 +62,30 @@ export default function Hero() {
           transition={{ delay: 0.5, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           className="relative max-md:order-2 max-md:mt-6"
         >
-          <a href="https://guayafood.vercel.app/" target="_blank" rel="noopener noreferrer" aria-label="Ver sitio de Guayafood" className="block relative overflow-hidden rounded-2xl border border-white/[0.08] bg-black shadow-2xl group cursor-pointer">
-            <div className="absolute inset-0 bg-white/0 group-hover:bg-white/[0.03] transition-colors duration-300 z-10 rounded-2xl" />
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="w-full h-auto block"
-            >
-              <source src="/hero-demo.mp4" type="video/mp4" />
-            </video>
-          </a>
+          <div className="perspective-[1000px] group">
+            <div className="relative [transform-style:preserve-3d] transition-transform duration-700 border border-white/[0.08] bg-black shadow-2xl group-hover:[transform:rotateY(180deg)]">
+              {/* Front: video */}
+              <a
+                href="https://guayafood.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Ver sitio de Guayafood"
+                className="block [backface-visibility:hidden] rounded-2xl overflow-hidden cursor-pointer"
+              >
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-colors duration-500 z-10 rounded-2xl" />
+                <video autoPlay muted loop playsInline className="w-full h-auto block">
+                  <source src="/hero-demo.mp4" type="video/mp4" />
+                </video>
+              </a>
+
+              {/* Back: text */}
+              <div className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] flex flex-col items-center justify-center bg-black rounded-2xl overflow-hidden">
+                <span className="text-5xl md:text-6xl mb-4 [filter:drop-shadow(0_0_12px_rgba(232,255,0,0.5))]">↗</span>
+                <span className="font-sans text-white/80 text-base md:text-lg font-medium tracking-wide">Explorar proyecto</span>
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-12 h-[1px] bg-[var(--accent)] opacity-50" />
+              </div>
+            </div>
+          </div>
           <div className="absolute -bottom-4 left-10 right-10 h-8 rounded-full bg-black/40 blur-xl" />
         </motion.div>
       </Container>

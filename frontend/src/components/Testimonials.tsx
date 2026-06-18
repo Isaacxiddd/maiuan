@@ -4,22 +4,10 @@ import Container from './Container'
 
 const testimonials = [
   {
-    name: 'Valentina R.',
-    role: 'Nutricionista',
-    location: 'CABA',
-    text: 'Antes tenía Instagram pero nadie me escribía. Con la landing empecé a recibir consultas todos los días. En el primer mes recuperé la inversión.',
-  },
-  {
-    name: 'Marcos L.',
-    role: 'Arquitecto',
-    location: 'Palermo',
-    text: 'El proceso fue claro y rápido. En dos semanas tenía la web publicada y ya me llegaron dos proyectos nuevos. Ahora la uso como carta de presentación.',
-  },
-  {
-    name: 'Clínica Dental Norte',
-    role: 'Odontología',
-    location: 'Belgrano',
-    text: 'La inversión se recuperó en el primer mes. Ahora el 60% de nuestras reservas vienen directamente de la landing. Es lo mejor que hicimos para el negocio.',
+    name: 'Maria',
+    role: 'Dueña de Guayafood',
+    location: '',
+    text: 'Sin problemas, excelente servicio.',
   },
 ]
 
@@ -44,7 +32,7 @@ export default function Testimonials() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-4 items-stretch max-w-md mx-auto">
           {testimonials.map((t, i) => (
             <motion.div
               key={t.name}
