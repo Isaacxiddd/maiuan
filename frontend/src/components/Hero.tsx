@@ -38,19 +38,57 @@ export default function Hero() {
           >
             <motion.a
               href="#contacto"
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
-              className="bg-[var(--accent)] text-black text-sm md:text-base font-semibold px-7 py-3.5 rounded-full hover:bg-white transition-colors duration-200 cursor-pointer block"
+              initial="idle"
+              whileHover="hover"
+              className="relative bg-[var(--accent)] text-black text-sm md:text-base font-semibold px-7 py-3.5 rounded-full hover:bg-white transition-colors duration-200 cursor-pointer block overflow-hidden"
             >
-              Hablemos
+              <div className="relative flex items-center justify-center">
+                <motion.span
+                  variants={{
+                    idle: { opacity: 1, y: 0, scale: 1 },
+                    hover: { opacity: 0, y: 6, scale: 0.6, transition: { duration: 0.2 } },
+                  }}
+                >
+                  Hablemos
+                </motion.span>
+                <motion.svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="absolute w-5 h-5 text-black"
+                  variants={{
+                    idle: { opacity: 0, y: -6, scale: 0.4 },
+                    hover: {
+                      opacity: [0, 1, 1],
+                      y: [-6, 3, 0],
+                      scale: [0.4, 1.2, 1],
+                      transition: { duration: 0.35, ease: 'easeOut' },
+                    },
+                  }}
+                >
+                  <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+                </motion.svg>
+              </div>
             </motion.a>
             <motion.a
               href="#servicios"
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
-              className="border border-[var(--border)] text-white/70 text-sm md:text-base px-7 py-3.5 rounded-md hover:border-white/30 hover:text-white transition-colors duration-200 cursor-pointer block"
+              initial="idle"
+              whileHover="hover"
+              className="relative border border-[var(--border)] text-white/70 text-sm md:text-base px-7 py-3.5 rounded-md hover:border-white/30 hover:text-white transition-colors duration-200 cursor-pointer block overflow-hidden"
             >
-              Ver servicios →
+              Ver servicios{' '}
+              <motion.span
+                className="inline-block"
+                variants={{
+                  idle: { x: 0, opacity: 1 },
+                  hover: { x: 80, opacity: [1, 1, 0], transition: { duration: 0.2, ease: 'easeIn' } },
+                }}
+              >
+                →
+              </motion.span>
             </motion.a>
           </motion.div>
         </div>

@@ -17,11 +17,12 @@ function getSectionId(href: string) {
 
 export default function Navbar() {
   const [activeSection, setActiveSection] = useState('')
-  const [pill, setPill] = useState({ left: 0, width: 0 })
   const [scrolled, setScrolled] = useState(false)
+  const [pill, setPill] = useState<{ left: number; width: number }>({ left: 0, width: 0 })
   const linkRefs = useRef<(HTMLAnchorElement | null)[]>([])
   const navRef = useRef<HTMLDivElement>(null)
   const activeRef = useRef('')
+  const pillVisible = useRef(false)
   const { scrollY } = useScroll()
 
   const scrollToSection = useCallback((sectionId: string) => {
@@ -62,6 +63,7 @@ export default function Navbar() {
     if (found === activeRef.current) return
     activeRef.current = found
     setActiveSection(found)
+    pillVisible.current = true
 
     if (found) {
       const idx = navLinks.findIndex(l => getSectionId(l.href) === found)
@@ -72,8 +74,6 @@ export default function Navbar() {
         const nr = navEl.getBoundingClientRect()
         setPill({ left: lr.left - nr.left, width: lr.width })
       }
-    } else {
-      setPill({ left: 0, width: 0 })
     }
   })
 
@@ -83,10 +83,12 @@ export default function Navbar() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       style={{ height: 'var(--nav-h)' }}
-      className={`fixed top-0 left-0 right-0 z-50 flex items-center backdrop-blur-xl border-b border-white/[0.06] transition-all duration-500 ${
-        scrolled ? 'bg-[#080808]/85' : 'bg-[#080808]/50'
+      className={`fixed top-0 left-0 right-0 z-50 flex items-center backdrop-blur-xl border-b transition-all duration-500 ${
+        scrolled ? 'bg-[#080808]/85 border-white/[0.06]' : 'bg-[#080808]/50 border-white/[0.03]'
       }`}
     >
+      {/* Top glow line */}
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--accent)]/15 to-transparent" />
       <div className="w-full max-w-6xl mx-auto px-6 md:px-12 flex items-center justify-between">
         <div className="min-w-[5.5rem]" onClickCapture={e => { e.preventDefault(); e.stopPropagation(); window.scrollTo({ top: 0 }); history.replaceState(null, '', window.location.pathname) }}>
           <MaiuanLogo />
@@ -99,33 +101,37 @@ export default function Navbar() {
           animate="visible"
           variants={{ visible: { transition: { staggerChildren: 0.05, delayChildren: 0.15 } } }}
         >
-          {pill.width > 0 && (
-            <motion.div
-              className="absolute top-1/2 -translate-y-1/2 rounded-full bg-white/10 border border-white/[0.06]"
-              animate={{ left: pill.left, width: pill.width }}
-              transition={{ type: 'spring', stiffness: 300, damping: 28, mass: 0.8 }}
-              style={{ height: 'calc(100% - 8px)' }}
-            />
-          )}
-          {navLinks.map(({ label, href }, i) => (
-            <motion.a
-              key={href}
-              ref={el => { linkRefs.current[i] = el }}
-              href={href}
-              onClick={e => handleNavClick(e, getSectionId(href))}
-              variants={{ hidden: { opacity: 0, y: -8 }, visible: { opacity: 1, y: 0 } }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-              whileHover={{ scale: 1.05 }}
-              className={`relative z-10 px-5 py-1.5 text-sm font-medium rounded-full transition-all duration-300 ${
-                activeSection === getSectionId(href)
-                  ? 'text-white scale-[1.02]'
-                  : 'text-white/50 hover:bg-white/[0.04] hover:text-white/80'
-              }`}
-              style={activeSection === getSectionId(href) ? { textShadow: '0 0 12px rgba(255,255,255,0.15)' } : undefined}
-            >
-              {label}
-            </motion.a>
-          ))}
+          {/* Pill indicator (scroll) */}
+          <motion.div
+            className="absolute top-0 bottom-0 rounded-full bg-white/10 pointer-events-none"
+            animate={{ left: pill.left, width: pill.width }}
+            transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+          />
+
+          {navLinks.map(({ label, href }, i) => {
+            const isActive = activeSection === getSectionId(href)
+            return (
+              <motion.a
+                key={href}
+                ref={el => { linkRefs.current[i] = el }}
+                href={href}
+                onClick={e => handleNavClick(e, getSectionId(href))}
+                variants={{ hidden: { opacity: 0, y: -8 }, visible: { opacity: 1, y: 0 } }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                className={`relative z-10 px-5 py-1.5 text-sm font-medium rounded-full transition-all duration-300 group ${
+                  isActive
+                    ? 'text-white'
+                    : 'text-white/50 hover:text-white'
+                }`}
+              >
+                {label}
+                {/* Underline hover (solo mouse, no scroll) */}
+                <span
+                  className={`absolute inset-x-3 bottom-0 h-[1.5px] rounded-full bg-[var(--accent)] transition-all duration-300 scale-x-0 group-hover:scale-x-100`}
+                />
+              </motion.a>
+            )
+          })}
         </motion.nav>
 
         <a
