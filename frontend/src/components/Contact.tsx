@@ -38,6 +38,7 @@ export default function Contact() {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
   const [status, setStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle')
+  const [errorMsg, setErrorMsg] = useState('')
   const [copied, setCopied] = useState(false)
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm<FormData>({
@@ -46,6 +47,7 @@ export default function Contact() {
 
   const onSubmit = async (data: FormData) => {
     setStatus('loading')
+    setErrorMsg('')
     try {
       const res = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
@@ -53,15 +55,17 @@ export default function Contact() {
         body: JSON.stringify({
           access_key: WEB3FORMS_KEY,
           email: data.email,
-          from_name: data.name,
+          name: data.name,
           rubro: data.rubro,
           message: data.message,
         }),
       })
-      if (res.ok) { setStatus('ok'); reset() }
-      else setStatus('error')
+      const body = await res.json()
+      if (res.ok && body.success) { setStatus('ok'); reset() }
+      else { setStatus('error'); setErrorMsg(body.message || 'Error de servidor') }
     } catch {
       setStatus('error')
+      setErrorMsg('Error de conexión')
     }
   }
 
@@ -142,12 +146,12 @@ export default function Contact() {
                 ) : 'Enviar mensaje'}
               </motion.button>
               {status === 'error' && (
-                <p className="text-red-400 text-center text-xs mt-1">
-                  Algo salió mal.{" "}
-                  <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="underline hover:text-white transition-colors">
+                <div className="text-center mt-1">
+                  <p className="text-red-400 text-xs">{errorMsg}</p>
+                  <a href={WA_LINK} target="_blank" rel="noopener noreferrer" className="text-red-400/70 text-xs underline hover:text-white transition-colors mt-1 inline-block">
                     Escribinos por WhatsApp
-                  </a>.
-                </p>
+                  </a>
+                </div>
               )}
             </motion.form>
           )}
