@@ -1,78 +1,137 @@
 import { useEffect, useRef } from 'react'
 import { animate } from 'animejs'
 
-// ── Particle canvas ──────────────────────────────────────────────────────────
-interface Particle { x:number; y:number; vx:number; vy:number; r:number; a:number; acc:string }
-
 const ACCENT = '232,255,0'
 const WHITE  = '255,255,255'
-const COUNT  = 70
-const LINK   = 120
 
-// ── Orb config (scroll speed = how many px the orb moves per scroll px) ──────
+interface WaveLine {
+  yBase: number
+  amp: number
+  freq: number
+  phase: number
+  speed: number
+  alpha: number
+  color: string
+}
+
+interface Bridge { i: number; j: number; x: number }
+
+const LINES = 22
+const BRIDGES = 5
+
+// ── Orb config ─────────────────────────────────────────────────────────────────
 const ORBS = [
-  { top: '-8%',  left: '62%', w: 660, h: 520, color: 'rgba(232,255,0,0.10)', blur: 85,  speed: 0.22, dur: 12000 },
-  { top: '28%',  left: '-7%', w: 430, h: 430, color: 'rgba(255,255,255,0.045)', blur: 70, speed: 0.09, dur: 9000 },
-  { top: '65%',  left: '42%', w: 540, h: 370, color: 'rgba(232,255,0,0.07)', blur: 95,  speed: 0.30, dur: 15000 },
+  { top: '-6%',  left: '60%', w: 520, h: 420, color: 'rgba(232,255,0,0.07)', blur: 80,  speed: 0.22, dur: 12000 },
+  { top: '30%',  left: '-5%', w: 360, h: 360, color: 'rgba(255,255,255,0.035)', blur: 65, speed: 0.09, dur: 9000 },
+  { top: '62%',  left: '44%', w: 440, h: 300, color: 'rgba(232,255,0,0.05)', blur: 90,  speed: 0.30, dur: 15000 },
 ]
 
 export default function BgTexture() {
-  const canvasRef   = useRef<HTMLCanvasElement>(null)
-  const wrapRefs    = useRef<(HTMLDivElement | null)[]>([])
-  const floatRefs   = useRef<(HTMLDivElement | null)[]>([])
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const mouseRef  = useRef({ x: 0.5, y: 0.5 })
+  const wrapRefs  = useRef<(HTMLDivElement | null)[]>([])
+  const floatRefs = useRef<(HTMLDivElement | null)[]>([])
 
-  // ── Canvas particles ────────────────────────────────────────────────────────
+  // ── Wave canvas ──────────────────────────────────────────────────────────────
   useEffect(() => {
     const canvas = canvasRef.current!
-    const ctx    = canvas.getContext('2d')!
+    const ctx = canvas.getContext('2d')!
     let animId: number
-    let pts: Particle[] = []
+    let lines: WaveLine[] = []
+    let bridges: Bridge[] = []
+    let time = 0
 
-    const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight }
+    const resize = () => {
+      canvas.width = window.innerWidth
+      canvas.height = window.innerHeight
+      initLines()
+      initBridges()
+    }
 
-    const spawn = (): Particle => ({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      vx: (Math.random() - .5) * .25,
-      vy: (Math.random() - .5) * .25,
-      r:  Math.random() * 1.2 + .4,
-      a:  Math.random() * .35 + .08,
-      acc: Math.random() < .18 ? ACCENT : WHITE,
-    })
+    function initLines() {
+      const spacing = canvas.height / (LINES + 1)
+      lines = Array.from({ length: LINES }, (_, i) => ({
+        yBase: spacing * (i + 1),
+        amp:  2 + Math.random() * 3,
+        freq: 0.4 + Math.random() * 0.6,
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.15 + Math.random() * 0.25,
+        alpha: 0.02 + Math.random() * 0.05,
+        color: Math.random() < 0.25 ? ACCENT : WHITE,
+      }))
+    }
 
-    const init = () => { resize(); pts = Array.from({ length: COUNT }, spawn) }
+    function initBridges() {
+      const pool = Array.from({ length: LINES }, (_, i) => i)
+      bridges = []
+      for (let k = 0; k < BRIDGES; k++) {
+        const i = pool[Math.floor(Math.random() * (pool.length - 1))]
+        const j = i + 1
+        bridges.push({ i, j, x: 0.15 + Math.random() * 0.6 })
+      }
+    }
+
+    const onMouse = (e: MouseEvent) => {
+      mouseRef.current = {
+        x: e.clientX / canvas.width,
+        y: e.clientY / canvas.height,
+      }
+    }
 
     const draw = () => {
+      time += 0.008
+      const mx = mouseRef.current.x
+      const my = mouseRef.current.y
+
       ctx.clearRect(0, 0, canvas.width, canvas.height)
-      for (let i = 0; i < pts.length; i++) {
-        const p = pts[i]
-        p.x += p.vx; p.y += p.vy
-        if (p.x < 0) p.x = canvas.width
-        if (p.x > canvas.width)  p.x = 0
-        if (p.y < 0) p.y = canvas.height
-        if (p.y > canvas.height) p.y = 0
+
+      // ── Bridges ──────────────────────────────────────────────────
+      for (const b of bridges) {
+        const a = lines[b.i]
+        const c = lines[b.j]
+        const x = b.x * canvas.width
+        const waveA = a.amp * Math.sin(x * a.freq * 0.008 + a.phase + time * a.speed + mx * 0.6)
+        const waveC = c.amp * Math.sin(x * c.freq * 0.008 + c.phase + time * c.speed + mx * 0.6)
+        const yA = a.yBase + waveA
+        const yC = c.yBase + waveC
+        const alpha = Math.min(a.alpha, c.alpha) * (0.4 + 0.3 * Math.sin(time + b.i))
         ctx.beginPath()
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(${p.acc},${p.a})`
-        ctx.fill()
-        for (let j = i + 1; j < pts.length; j++) {
-          const q  = pts[j]
-          const dx = p.x - q.x, dy = p.y - q.y
-          const d  = Math.sqrt(dx * dx + dy * dy)
-          if (d < LINK) {
-            ctx.beginPath()
-            ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y)
-            ctx.strokeStyle = `rgba(${p.acc},${(1 - d / LINK) * .06})`
-            ctx.lineWidth = .5; ctx.stroke()
-          }
-        }
+        ctx.moveTo(x, yA)
+        ctx.lineTo(x, yC)
+        ctx.strokeStyle = `rgba(${ACCENT},${alpha})`
+        ctx.lineWidth = 0.5
+        ctx.stroke()
       }
+
+      // ── Lines ────────────────────────────────────────────────────
+      for (const l of lines) {
+        ctx.beginPath()
+        for (let x = 0; x <= canvas.width; x += 2) {
+          const wave = l.amp * Math.sin(x * l.freq * 0.008 + l.phase + time * l.speed + mx * 0.6)
+          const y = l.yBase + wave + (l.yBase - canvas.height * 0.5) * (my - 0.5) * 0.04
+          if (x === 0) ctx.moveTo(x, y)
+          else ctx.lineTo(x, y)
+        }
+        const alpha = l.alpha * (0.85 + 0.15 * Math.sin(time * 0.5 + l.phase))
+        ctx.strokeStyle = `rgba(${l.color},${alpha})`
+        ctx.lineWidth = 0.6
+        ctx.stroke()
+      }
+
       animId = requestAnimationFrame(draw)
     }
 
-    init(); draw()
-    window.addEventListener('resize', init)
-    return () => { cancelAnimationFrame(animId); window.removeEventListener('resize', init) }
+    initLines()
+    initBridges()
+    draw()
+    window.addEventListener('resize', resize)
+    window.addEventListener('mousemove', onMouse, { passive: true })
+
+    return () => {
+      cancelAnimationFrame(animId)
+      window.removeEventListener('resize', resize)
+      window.removeEventListener('mousemove', onMouse)
+    }
   }, [])
 
   // ── Orb float + scroll parallax ─────────────────────────────────────────────
@@ -80,13 +139,12 @@ export default function BgTexture() {
     const anims = floatRefs.current.map((el, i) => {
       if (!el) return null
       const { dur } = ORBS[i]
-      // Four-keyframe loop gives an organic, non-repetitive path
       return animate(el, {
         keyframes: [
-          { translateX: -38, translateY: -28 },
-          { translateX:  28, translateY:  18 },
-          { translateX: -18, translateY:  32 },
-          { translateX:  34, translateY: -16 },
+          { translateX: -30, translateY: -22 },
+          { translateX:  22, translateY:  14 },
+          { translateX: -14, translateY:  26 },
+          { translateX:  28, translateY: -12 },
         ],
         duration:  dur,
         loop:      true,
@@ -94,8 +152,8 @@ export default function BgTexture() {
       })
     })
 
-    let current  = 0
-    let target   = 0
+    let current = 0
+    let target  = 0
     let raf: number
 
     const onScroll = () => { target = window.scrollY }
@@ -103,14 +161,13 @@ export default function BgTexture() {
 
     const tick = () => {
       const velocity = target - current
-      current += velocity * 0.07          // smooth lag
+      current += velocity * 0.07
 
       wrapRefs.current.forEach((el, i) => {
         if (!el) return
         el.style.transform = `translateY(${-(current * ORBS[i].speed).toFixed(2)}px)`
       })
 
-      // Orbs glow a bit harder while actively scrolling
       const glow = Math.min(1, 0.78 + Math.abs(velocity) * 0.018)
       floatRefs.current.forEach(el => { if (el) el.style.opacity = String(glow) })
 
@@ -127,10 +184,8 @@ export default function BgTexture() {
 
   return (
     <>
-      {/* Particle layer */}
       <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none -z-10" />
 
-      {/* Orb layer */}
       <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
         {ORBS.map((orb, i) => (
           <div
@@ -141,25 +196,22 @@ export default function BgTexture() {
             <div
               ref={el => { floatRefs.current[i] = el }}
               style={{
-                width:        orb.w,
-                height:       orb.h,
-                background:   `radial-gradient(circle, ${orb.color} 0%, transparent 68%)`,
+                width: orb.w, height: orb.h,
+                background: `radial-gradient(circle, ${orb.color} 0%, transparent 68%)`,
                 borderRadius: '50%',
-                filter:       `blur(${orb.blur}px)`,
-                willChange:   'transform, opacity',
+                filter: `blur(${orb.blur}px)`,
+                willChange: 'transform, opacity',
               }}
             />
           </div>
         ))}
 
-        {/* Vignette — darkens edges so content stays readable */}
         <div
           style={{
-            position:   'absolute',
-            inset:      0,
+            position: 'absolute', inset: 0,
             background: `
               radial-gradient(ellipse 85% 55% at 50% 38%, transparent 25%, rgba(8,8,8,.85) 100%),
-              radial-gradient(ellipse at 50% 0%, rgba(232,255,0,.018) 0%, transparent 50%)
+              radial-gradient(ellipse at 50% 0%, rgba(232,255,0,.015) 0%, transparent 50%)
             `,
           }}
         />
