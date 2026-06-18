@@ -9,12 +9,12 @@ export default function Footer() {
           © {new Date().getFullYear()} maiuan. Buenos Aires.
         </p>
         <a
-          href="https://instagram.com/maiuan.ba"
+          href="https://instagram.com/maiuan.ar"
           target="_blank"
           rel="noopener noreferrer"
           className="text-[var(--text-muted)] hover:text-[var(--accent)] transition-colors duration-200 text-xs"
         >
-          @maiuan.ba ↗
+          @maiuan.ar ↗
         </a>
       </Container>
     </footer>

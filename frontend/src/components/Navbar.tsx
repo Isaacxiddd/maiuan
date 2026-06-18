@@ -129,12 +129,12 @@ export default function Navbar() {
         </motion.nav>
 
         <a
-          href="https://instagram.com/maiuan.ba"
+          href="https://instagram.com/maiuan.ar"
           target="_blank"
           rel="noopener noreferrer"
           className="text-xs font-medium text-white/40 hover:text-[var(--accent)] transition-colors duration-200 tracking-wide"
         >
-          @maiuan.ba ↗
+          @maiuan.ar ↗
         </a>
       </div>
     </motion.header>
