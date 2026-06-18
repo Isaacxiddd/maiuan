@@ -111,7 +111,7 @@ export default function Process() {
           <span className="text-[var(--accent)] text-xs font-semibold tracking-[0.2em] uppercase">¿Qué hacemos?</span>
           <h2 className="text-[clamp(2rem,4vw,3rem)] font-extrabold mt-4">Cómo trabajamos.</h2>
           <p className="text-[var(--text-muted)] mt-4 text-base font-light leading-relaxed">
-            Sin vueltas. Sin sorpresas. Entrega en tiempo y forma.
+            Entrega en tiempo y forma.
           </p>
         </motion.div>
 
