@@ -42,18 +42,9 @@ export default function Portfolio() {
               transition={{ delay: i * 0.12, duration: 0.6 }}
               className="rounded-xl border border-[var(--border)] overflow-hidden hover:border-white/25 transition-colors duration-300 flex flex-col"
             >
-              {p.image ? (
-                <div className="h-28 shrink-0 overflow-hidden">
-                  <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
-                </div>
-              ) : (
-                <div
-                  className="h-28 flex items-center justify-center text-4xl shrink-0"
-                  style={{ background: p.bg }}
-                >
-                  {p.emoji}
-                </div>
-              )}
+              <div className="h-28 shrink-0 overflow-hidden">
+                <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+              </div>
 
               <div className="p-4 flex flex-col flex-1">
                 <span className="text-[var(--accent)] text-[9px] font-semibold tracking-[0.2em] uppercase">{p.rubro}</span>
