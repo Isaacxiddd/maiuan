@@ -56,8 +56,8 @@ export default function BgTexture() {
         freq: 0.4 + Math.random() * 0.6,
         phase: Math.random() * Math.PI * 2,
         speed: 0.15 + Math.random() * 0.25,
-        alpha: 0.02 + Math.random() * 0.05,
-        color: Math.random() < 0.25 ? ACCENT : WHITE,
+        alpha: 0.07 + Math.random() * 0.10,
+        color: Math.random() < 0.4 ? ACCENT : WHITE,
       }))
     }
 
@@ -98,8 +98,8 @@ export default function BgTexture() {
         ctx.beginPath()
         ctx.moveTo(x, yA)
         ctx.lineTo(x, yC)
-        ctx.strokeStyle = `rgba(${ACCENT},${alpha})`
-        ctx.lineWidth = 0.5
+        ctx.strokeStyle = `rgba(${ACCENT},${alpha * 1.5})`
+        ctx.lineWidth = 0.6
         ctx.stroke()
       }
 
@@ -114,7 +114,7 @@ export default function BgTexture() {
         }
         const alpha = l.alpha * (0.85 + 0.15 * Math.sin(time * 0.5 + l.phase))
         ctx.strokeStyle = `rgba(${l.color},${alpha})`
-        ctx.lineWidth = 0.6
+        ctx.lineWidth = 0.8
         ctx.stroke()
       }
 
