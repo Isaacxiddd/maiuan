@@ -14,10 +14,7 @@ interface WaveLine {
   color: string
 }
 
-interface Bridge { i: number; j: number; x: number }
-
 const LINES = 22
-const BRIDGES = 5
 
 // ── Orb config ─────────────────────────────────────────────────────────────────
 const ORBS = [
@@ -28,7 +25,7 @@ const ORBS = [
 
 export default function BgTexture() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const mouseRef  = useRef({ x: 0.5, y: 0.5 })
+  const mouseRef  = useRef({ x: 0.5, y: 0.5, v: 0 })
   const wrapRefs  = useRef<(HTMLDivElement | null)[]>([])
   const floatRefs = useRef<(HTMLDivElement | null)[]>([])
 
@@ -38,91 +35,69 @@ export default function BgTexture() {
     const ctx = canvas.getContext('2d')!
     let animId: number
     let lines: WaveLine[] = []
-    let bridges: Bridge[] = []
     let time = 0
 
     const resize = () => {
       canvas.width = window.innerWidth
       canvas.height = window.innerHeight
       initLines()
-      initBridges()
     }
 
     function initLines() {
       const spacing = canvas.height / (LINES + 1)
       lines = Array.from({ length: LINES }, (_, i) => ({
         yBase: spacing * (i + 1),
-        amp:  2 + Math.random() * 3,
-        freq: 0.4 + Math.random() * 0.6,
+        amp:  6 + Math.random() * 10,
+        freq: 0.5 + Math.random() * 0.8,
         phase: Math.random() * Math.PI * 2,
-        speed: 0.15 + Math.random() * 0.25,
-        alpha: 0.02 + Math.random() * 0.05,
-        color: Math.random() < 0.25 ? ACCENT : WHITE,
+        speed: 0.12 + Math.random() * 0.2,
+        alpha: 0.12 + Math.random() * 0.18,
+        color: Math.random() < 0.4 ? ACCENT : WHITE,
       }))
     }
 
-    function initBridges() {
-      const pool = Array.from({ length: LINES }, (_, i) => i)
-      bridges = []
-      for (let k = 0; k < BRIDGES; k++) {
-        const i = pool[Math.floor(Math.random() * (pool.length - 1))]
-        const j = i + 1
-        bridges.push({ i, j, x: 0.15 + Math.random() * 0.6 })
-      }
-    }
+    let prevX = 0.5
 
     const onMouse = (e: MouseEvent) => {
+      const nx = e.clientX / canvas.width
       mouseRef.current = {
-        x: e.clientX / canvas.width,
+        x: nx,
         y: e.clientY / canvas.height,
+        v: Math.abs(nx - prevX) * 5,
       }
+      prevX = nx
     }
 
     const draw = () => {
       time += 0.008
       const mx = mouseRef.current.x
       const my = mouseRef.current.y
+      const vel = mouseRef.current.v
+      mouseRef.current.v *= 0.92
 
       ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-      // ── Bridges ──────────────────────────────────────────────────
-      for (const b of bridges) {
-        const a = lines[b.i]
-        const c = lines[b.j]
-        const x = b.x * canvas.width
-        const waveA = a.amp * Math.sin(x * a.freq * 0.008 + a.phase + time * a.speed + mx * 0.6)
-        const waveC = c.amp * Math.sin(x * c.freq * 0.008 + c.phase + time * c.speed + mx * 0.6)
-        const yA = a.yBase + waveA
-        const yC = c.yBase + waveC
-        const alpha = Math.min(a.alpha, c.alpha) * (0.4 + 0.3 * Math.sin(time + b.i))
-        ctx.beginPath()
-        ctx.moveTo(x, yA)
-        ctx.lineTo(x, yC)
-        ctx.strokeStyle = `rgba(${ACCENT},${alpha})`
-        ctx.lineWidth = 0.5
-        ctx.stroke()
-      }
 
       // ── Lines ────────────────────────────────────────────────────
       for (const l of lines) {
         ctx.beginPath()
         for (let x = 0; x <= canvas.width; x += 2) {
-          const wave = l.amp * Math.sin(x * l.freq * 0.008 + l.phase + time * l.speed + mx * 0.6)
-          const y = l.yBase + wave + (l.yBase - canvas.height * 0.5) * (my - 0.5) * 0.04
+          const progress = Math.pow(x / canvas.width, 0.3)
+          const boost = 1 + vel * 2
+          const wave = l.amp * boost * progress * Math.sin(x * l.freq * 0.008 + l.phase + time * l.speed + (mx - 0.5) * 5)
+          const y = l.yBase + wave + (l.yBase - canvas.height * 0.5) * (my - 0.5) * 0.25
           if (x === 0) ctx.moveTo(x, y)
           else ctx.lineTo(x, y)
         }
         const alpha = l.alpha * (0.85 + 0.15 * Math.sin(time * 0.5 + l.phase))
         ctx.strokeStyle = `rgba(${l.color},${alpha})`
-        ctx.lineWidth = 0.6
+        ctx.lineWidth = 1.2
         ctx.stroke()
       }
 
       animId = requestAnimationFrame(draw)
     }
 
-    initLines()
-    initBridges()
+    resize()
     draw()
     window.addEventListener('resize', resize)
     window.addEventListener('mousemove', onMouse, { passive: true })
