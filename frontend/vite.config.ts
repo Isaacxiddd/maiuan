@@ -4,5 +4,16 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  server: { port: 5173 }
+  server: { port: 5173 },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules/react-dom') || id.includes('node_modules/react/')) return 'vendor-react'
+          if (id.includes('node_modules/framer-motion')) return 'vendor-framer'
+          if (id.includes('node_modules/animejs')) return 'vendor-animejs'
+        },
+      },
+    },
+  },
 })

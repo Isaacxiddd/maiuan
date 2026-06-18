@@ -1,7 +1,33 @@
 import { motion } from 'framer-motion'
+import { useRef, useState, useEffect } from 'react'
 import Container from './Container'
 
 export default function Hero() {
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [videoLoaded, setVideoLoaded] = useState(false)
+
+  useEffect(() => {
+    const el = videoRef.current
+    if (!el) return
+    const ob = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVideoLoaded(true)
+          ob.disconnect()
+        }
+      },
+      { rootMargin: '200px' },
+    )
+    ob.observe(el)
+    return () => ob.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (!videoLoaded) return
+    const el = videoRef.current
+    if (!el) return
+    el.load()
+  }, [videoLoaded])
   return (
     <section
       id="hero"
@@ -111,7 +137,13 @@ export default function Hero() {
                 className="block [backface-visibility:hidden] rounded-2xl overflow-hidden cursor-pointer"
               >
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-colors duration-500 z-10 rounded-2xl" />
-                <video autoPlay muted loop playsInline className="w-full h-auto block">
+                <video
+                  ref={videoRef}
+                  autoPlay muted loop playsInline
+                  poster="/guayafood-frame.jpg"
+                  preload={videoLoaded ? 'auto' : 'none'}
+                  className="w-full h-auto block"
+                >
                   <source src="/hero-demo.mp4" type="video/mp4" />
                 </video>
               </a>

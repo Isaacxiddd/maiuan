@@ -1,11 +1,11 @@
 import { lazy, Suspense } from 'react'
-import BgTexture from './components/BgTexture'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Insight from './components/Insight'
 import Solution from './components/Solution'
 import WhatsAppButton from './components/WhatsAppButton'
 
+const BgTexture = lazy(() => import('./components/BgTexture'))
 const Services = lazy(() => import('./components/Services'))
 const Process = lazy(() => import('./components/Process'))
 const Portfolio = lazy(() => import('./components/Portfolio'))
@@ -18,7 +18,7 @@ const SectionFallback = () => <div className="h-24" />
 export default function App() {
   return (
     <main className="min-h-screen">
-      <BgTexture />
+      <Suspense fallback={null}><BgTexture /></Suspense>
       <Navbar />
       <Hero />
       <Insight />

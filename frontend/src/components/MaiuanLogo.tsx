@@ -1,26 +1,26 @@
-import { useLayoutEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import './MaiuanLogo.css'
 
 export default function MaiuanLogo() {
   const iRef = useRef<HTMLSpanElement>(null)
   const uRef = useRef<HTMLSpanElement>(null)
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const i = iRef.current
     const u = uRef.current
     if (!i || !u) return
 
-    const iRect = i.getBoundingClientRect()
-    const uRect = u.getBoundingClientRect()
-    const letterSpacing = parseFloat(getComputedStyle(i).letterSpacing) || 0
+    requestAnimationFrame(() => {
+      const iRect = i.getBoundingClientRect()
+      const uRect = u.getBoundingClientRect()
+      const letterSpacing = parseFloat(getComputedStyle(i).letterSpacing) || 0
 
-    // U se desplaza exactamente a donde está I (natural gap para "UI")
-    const shiftU = uRect.left - iRect.left
-    // I se desplaza al lugar que ocupa U + su letter-spacing (para que quede pegada a U)
-    const shiftI = uRect.width + letterSpacing
+      const shiftU = uRect.left - iRect.left
+      const shiftI = uRect.width + letterSpacing
 
-    u.style.setProperty('--shift-u', `${shiftU}px`)
-    i.style.setProperty('--shift-i', `${shiftI}px`)
+      u.style.setProperty('--shift-u', `${shiftU}px`)
+      i.style.setProperty('--shift-i', `${shiftI}px`)
+    })
   }, [])
 
   return (
