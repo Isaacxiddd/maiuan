@@ -1,89 +1,58 @@
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion'
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import MaiuanLogo from './MaiuanLogo'
 
-const NAV_H = 72
-
 const navLinks = [
-  { label: 'Servicios', href: '/servicios' },
-  { label: '¿Qué hacemos?', href: '/que-hacemos' },
-  { label: 'Trabajos', href: '/trabajos' },
-  { label: 'Contacto', href: '/#contacto' },
+  { label: 'Servicios', section: 'servicios', path: '/servicios' },
+  { label: '¿Qué hacemos?', section: 'proceso', path: '/que-hacemos' },
+  { label: 'Trabajos', section: 'portfolio', path: '/trabajos' },
+  { label: 'Contacto', section: 'contacto', path: '/contacto' },
 ]
-
-const landingSectionIds = ['servicios', 'proceso', 'portfolio', 'contacto']
-
-function getSectionId(href: string) {
-  return href.slice(1)
-}
 
 export default function Navbar() {
   const location = useLocation()
   const navigate = useNavigate()
-  const isLanding = location.pathname === '/'
-
-  const [activeSection, setActiveSection] = useState('')
   const [scrolled, setScrolled] = useState(false)
   const [pill, setPill] = useState<{ left: number; width: number }>({ left: 0, width: 0 })
   const linkRefs = useRef<(HTMLAnchorElement | null)[]>([])
   const navRef = useRef<HTMLDivElement>(null)
-  const activeRef = useRef('')
   const { scrollY } = useScroll()
 
   const currentPath = location.pathname
 
+  const updatePill = useCallback(() => {
+    const idx = navLinks.findIndex(l => l.path === currentPath)
+    const linkEl = linkRefs.current[idx]
+    const navEl = navRef.current
+    if (linkEl && navEl) {
+      const lr = linkEl.getBoundingClientRect()
+      const nr = navEl.getBoundingClientRect()
+      setPill({ left: lr.left - nr.left, width: lr.width })
+    } else {
+      setPill({ left: 0, width: 0 })
+    }
+  }, [currentPath])
+
+  useEffect(() => {
+    updatePill()
+  }, [updatePill])
+
   useMotionValueEvent(scrollY, 'change', () => {
     setScrolled(window.scrollY > 40)
-
-    if (!isLanding) return
-
-    const sectionIds = landingSectionIds
-    const vh = window.innerHeight
-    let found = ''
-
-    for (let i = sectionIds.length - 1; i >= 0; i--) {
-      const el = document.getElementById(sectionIds[i])
-      if (!el) continue
-      const rect = el.getBoundingClientRect()
-      if (rect.top < vh && rect.bottom > NAV_H) {
-        found = sectionIds[i]
-        break
-      }
-    }
-
-    if (found === activeRef.current) return
-    activeRef.current = found
-    setActiveSection(found)
-
-    if (found) {
-      const idx = navLinks.findIndex(l => getSectionId(l.href) === found)
-      const linkEl = linkRefs.current[idx]
-      const navEl = navRef.current
-      if (linkEl && navEl) {
-        const lr = linkEl.getBoundingClientRect()
-        const nr = navEl.getBoundingClientRect()
-        setPill({ left: lr.left - nr.left, width: lr.width })
-      }
-    }
+    updatePill()
   })
 
-  const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    if (href === '/#contacto') {
-      e.preventDefault()
-      if (isLanding) {
-        const el = document.getElementById('contacto')
-        if (el) el.scrollIntoView({ behavior: 'smooth' })
-      } else {
-        navigate('/#contacto')
-      }
-      return
-    }
+  const handleClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, section: string, path: string) => {
     e.preventDefault()
-    navigate(href)
-  }, [isLanding, navigate])
+    const el = document.getElementById(section)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' })
+    }
+    navigate(path, { replace: true })
+  }, [navigate])
 
-  const showPill = isLanding && pill.width > 0
+  const showPill = pill.width > 0
 
   return (
     <motion.header
@@ -97,13 +66,13 @@ export default function Navbar() {
     >
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--accent)]/15 to-transparent" />
       <div className="w-full max-w-6xl mx-auto px-6 md:px-12 flex items-center justify-between">
-        <div className="min-w-[5.5rem] cursor-pointer" onClick={() => navigate('/')}>
+        <div className="min-w-[5.5rem] cursor-pointer" onClick={() => { navigate('/'); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>
           <MaiuanLogo />
         </div>
 
         <motion.nav
-          className="hidden md:flex items-center gap-1 relative"
           ref={navRef}
+          className="hidden md:flex items-center gap-1 relative"
           initial="hidden"
           animate="visible"
           variants={{ visible: { transition: { staggerChildren: 0.05, delayChildren: 0.15 } } }}
@@ -116,31 +85,24 @@ export default function Navbar() {
             />
           )}
 
-          {navLinks.map(({ label, href }, i) => {
-            const isLandingActive = isLanding && activeSection === getSectionId(href)
-            const isPageActive = href !== '/#contacto' && (
-              currentPath === href || (href !== '/' && currentPath.startsWith(href))
-            )
-            const isActive = isLandingActive || isPageActive
-
+          {navLinks.map(({ label, section, path }, i) => {
+            const isActive = currentPath === path
             return (
               <motion.a
-                key={href}
+                key={path}
                 ref={el => { linkRefs.current[i] = el }}
-                href={href}
-                onClick={e => handleNavClick(e, href)}
+                href={path}
+                onClick={e => handleClick(e, section, path)}
                 variants={{ hidden: { opacity: 0, y: -8 }, visible: { opacity: 1, y: 0 } }}
                 transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                 className={`relative z-10 px-5 py-1.5 text-sm font-medium rounded-full transition-all duration-300 group ${
-                  isActive
-                    ? 'text-white'
-                    : 'text-white/50 hover:text-white'
+                  isActive ? 'text-white' : 'text-white/50 hover:text-white'
                 }`}
               >
                 {label}
                 <span
                   className={`absolute inset-x-3 bottom-0 h-[1.5px] rounded-full bg-[var(--accent)] transition-all duration-300 scale-x-0 group-hover:scale-x-100 ${
-                    isPageActive ? 'scale-x-100' : ''
+                    isActive ? 'scale-x-100' : ''
                   }`}
                 />
               </motion.a>
