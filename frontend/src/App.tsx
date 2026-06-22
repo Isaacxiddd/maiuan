@@ -3,9 +3,21 @@ import Navbar from './components/Navbar'
 import Landing from './pages/Landing'
 import NotFound from './pages/NotFound'
 
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'maiuan',
+  url: 'https://maiuan.com',
+  sameAs: [
+    'https://instagram.com/maiuan.ar',
+    'https://linkedin.com/company/maiuan',
+  ],
+}
+
 export default function App() {
   return (
     <BrowserRouter>
+      <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       <Navbar />
       <Routes>
         <Route path="/" element={<Landing />} />
