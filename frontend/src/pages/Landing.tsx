@@ -1,5 +1,5 @@
-import { lazy, Suspense } from 'react'
-import Navbar from '../components/Navbar'
+import { lazy, Suspense, useEffect } from 'react'
+import { useLocation } from 'react-router-dom'
 import Hero from '../components/Hero'
 import Insight from '../components/Insight'
 import Solution from '../components/Solution'
@@ -16,10 +16,20 @@ const Footer = lazy(() => import('../components/Footer'))
 const SectionFallback = () => <div className="h-24" />
 
 export default function Landing() {
+  const { hash } = useLocation()
+
+  useEffect(() => {
+    if (hash) {
+      const id = hash.replace('#', '')
+      setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
+      }, 100)
+    }
+  }, [hash])
+
   return (
     <main className="min-h-screen">
       <Suspense fallback={null}><BgTexture /></Suspense>
-      <Navbar />
       <Hero />
       <Insight />
       <Solution />
