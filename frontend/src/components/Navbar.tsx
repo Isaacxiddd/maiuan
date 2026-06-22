@@ -1,13 +1,13 @@
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion'
-import { useState, useRef, useCallback, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import MaiuanLogo from './MaiuanLogo'
 
 const navLinks = [
-  { label: 'Servicios', section: 'servicios', path: '/servicios' },
-  { label: '¿Qué hacemos?', section: 'proceso', path: '/que-hacemos' },
-  { label: 'Trabajos', section: 'portfolio', path: '/trabajos' },
-  { label: 'Contacto', section: 'contacto', path: '/contacto' },
+  { label: 'Servicios', path: '/servicios' },
+  { label: '¿Qué hacemos?', path: '/que-hacemos' },
+  { label: 'Trabajos', path: '/trabajos' },
+  { label: 'Contacto', path: '/contacto' },
 ]
 
 export default function Navbar() {
@@ -23,34 +23,32 @@ export default function Navbar() {
 
   const updatePill = useCallback(() => {
     const idx = navLinks.findIndex(l => l.path === currentPath)
+    if (idx < 0) { setPill({ left: 0, width: 0 }); return }
     const linkEl = linkRefs.current[idx]
     const navEl = navRef.current
     if (linkEl && navEl) {
       const lr = linkEl.getBoundingClientRect()
       const nr = navEl.getBoundingClientRect()
       setPill({ left: lr.left - nr.left, width: lr.width })
-    } else {
-      setPill({ left: 0, width: 0 })
     }
   }, [currentPath])
 
+  useEffect(() => { updatePill() }, [updatePill])
+
   useEffect(() => {
-    updatePill()
+    const onResize = () => updatePill()
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
   }, [updatePill])
 
-  useMotionValueEvent(scrollY, 'change', () => {
-    setScrolled(window.scrollY > 40)
-    updatePill()
+  useMotionValueEvent(scrollY, 'change', (latest: number) => {
+    setScrolled(latest > 40)
   })
 
-  const handleClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, section: string, path: string) => {
+  const handleClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
     e.preventDefault()
-    const el = document.getElementById(section)
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' })
-    }
-    navigate(path)
-  }, [navigate])
+    if (currentPath !== path) navigate(path, { state: { nav: true } })
+  }, [navigate, currentPath])
 
   const showPill = pill.width > 0
 
@@ -85,24 +83,24 @@ export default function Navbar() {
             />
           )}
 
-          {navLinks.map(({ label, section, path }, i) => {
+          {navLinks.map(({ label, path }, i) => {
             const isActive = currentPath === path
             return (
               <motion.a
                 key={path}
                 ref={el => { linkRefs.current[i] = el }}
                 href={path}
-                onClick={e => handleClick(e, section, path)}
+                onClick={e => handleClick(e, path)}
                 variants={{ hidden: { opacity: 0, y: -8 }, visible: { opacity: 1, y: 0 } }}
                 transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                className={`relative z-10 px-5 py-1.5 text-sm font-medium rounded-full transition-all duration-300 group ${
+                className={`relative z-10 px-5 py-1.5 text-sm font-medium rounded-full transition-all duration-300 ${
                   isActive ? 'text-white' : 'text-white/50 hover:text-white'
                 }`}
               >
                 {label}
                 <span
-                  className={`absolute inset-x-3 bottom-0 h-[1.5px] rounded-full bg-[var(--accent)] transition-all duration-300 scale-x-0 group-hover:scale-x-100 ${
-                    isActive ? 'scale-x-100' : ''
+                  className={`absolute inset-x-3 bottom-0 h-[1.5px] rounded-full bg-[var(--accent)] transition-all duration-300 ${
+                    isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
                   }`}
                 />
               </motion.a>

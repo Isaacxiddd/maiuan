@@ -1,4 +1,5 @@
-import { lazy, Suspense, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
+import { lazy, Suspense } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useScroll } from 'framer-motion'
 import Hero from '../components/Hero'
@@ -32,10 +33,9 @@ const sectionToPath: Record<string, string> = {
 }
 
 const sectionIds = ['servicios', 'proceso', 'portfolio', 'contacto', 'faq']
-
 const NAV_H = 72
 
-function scrollToWithRetry(sectionId: string) {
+function scrollToSection(sectionId: string) {
   const el = document.getElementById(sectionId)
   if (el) {
     el.scrollIntoView({ behavior: 'instant' })
@@ -51,26 +51,38 @@ function scrollToWithRetry(sectionId: string) {
   setTimeout(() => clearInterval(timer), 5000)
 }
 
-function useScrollSpy() {
-  const navigate = useNavigate()
+export default function Landing() {
   const location = useLocation()
-  const visitedRef = useRef(new Set<string>())
-  const activeRef = useRef('')
+  const navigate = useNavigate()
   const pathRef = useRef(location.pathname)
-  pathRef.current = location.pathname
-
+  const activeRef = useRef('')
   const { scrollY } = useScroll()
 
+  // keep pathRef in sync without re-render cycles
+  pathRef.current = location.pathname
+
+  // scroll to section on nav click, back/forward, or direct URL
+  // but NOT when observer already handled it (scroll-based)
+  useEffect(() => {
+    const sectionId = pathToSection[location.pathname]
+    if (sectionId) {
+      if (activeRef.current !== sectionId) {
+        scrollToSection(sectionId)
+        activeRef.current = sectionId
+      }
+    } else {
+      window.scrollTo({ top: 0, behavior: 'instant' })
+      activeRef.current = ''
+    }
+  }, [location.pathname, location.state])
+
+  // set up observers once — never re-create
   useEffect(() => {
     const unsubScroll = scrollY.on('change', (latest: number) => {
-      if (latest < NAV_H + 10 && activeRef.current !== 'hero') {
-        activeRef.current = 'hero'
-        const cur = pathRef.current
-        if (cur !== '/') {
-          if (!visitedRef.current.has('hero')) {
-            visitedRef.current.add('hero')
-            navigate('/', { replace: true })
-          } else {
+      if (latest < NAV_H + 10) {
+        if (activeRef.current !== 'hero') {
+          activeRef.current = 'hero'
+          if (pathRef.current !== '/') {
             navigate('/', { replace: true })
           }
         }
@@ -86,12 +98,7 @@ function useScrollSpy() {
             activeRef.current = id
             const path = sectionToPath[id]
             if (!path || path === pathRef.current) continue
-            if (!visitedRef.current.has(id)) {
-              visitedRef.current.add(id)
-              navigate(path)
-            } else {
-              navigate(path, { replace: true })
-            }
+            navigate(path, { replace: true })
           }
         }
       },
@@ -101,24 +108,14 @@ function useScrollSpy() {
     const elements = sectionIds.map(id => document.getElementById(id)).filter(Boolean)
     elements.forEach(el => el && observer.observe(el))
 
-    const initialSection = pathToSection[location.pathname]
-    if (initialSection) {
-      scrollToWithRetry(initialSection)
-    }
-
     return () => {
       unsubScroll()
       observer.disconnect()
     }
-  }, [navigate, location.pathname])
+  }, [])
 
-  return null
-}
-
-export default function Landing() {
   return (
     <main className="min-h-screen">
-      <ScrollSpy />
       <Suspense fallback={null}><BgTexture /></Suspense>
       <Hero />
       <Insight />
@@ -135,9 +132,4 @@ export default function Landing() {
       <WhatsAppButton />
     </main>
   )
-}
-
-function ScrollSpy() {
-  useScrollSpy()
-  return null
 }
