@@ -49,7 +49,7 @@ export default function Navbar() {
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' })
     }
-    navigate(path, { replace: true })
+    navigate(path)
   }, [navigate])
 
   const showPill = pill.width > 0
