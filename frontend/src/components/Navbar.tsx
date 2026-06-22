@@ -10,31 +10,6 @@ const navLinks = [
   { label: 'Contacto', path: '/contacto', section: 'contacto' },
 ]
 
-function getActiveNavIndex(): number {
-  const scrollY = window.scrollY
-  const vh = window.innerHeight
-  const NAV_H = 72
-  const offset = scrollY + vh * 0.3 + NAV_H
-
-  let bestIdx = -1
-  let bestDist = Infinity
-
-  for (let i = 0; i < navLinks.length; i++) {
-    const el = document.getElementById(navLinks[i].section)
-    if (!el) continue
-    const rect = el.getBoundingClientRect()
-    const absTop = scrollY + rect.top
-    const dist = Math.abs(offset - absTop)
-    if (dist < bestDist) {
-      bestDist = dist
-      bestIdx = i
-    }
-  }
-
-  if (scrollY < 100) return -1
-  return bestIdx
-}
-
 export default function Navbar() {
   const location = useLocation()
   const navigate = useNavigate()
@@ -43,31 +18,70 @@ export default function Navbar() {
   const linkRefs = useRef<(HTMLAnchorElement | null)[]>([])
   const navRef = useRef<HTMLDivElement>(null)
   const { scrollY } = useScroll()
+  const rafRef = useRef(0)
 
   const currentPath = location.pathname
 
-  const updatePill = useCallback(() => {
-    const idx = getActiveNavIndex()
-    if (idx < 0) { setPill({ left: 0, width: 0 }); return }
-    const linkEl = linkRefs.current[idx]
-    const navEl = navRef.current
-    if (linkEl && navEl) {
-      const lr = linkEl.getBoundingClientRect()
-      const nr = navEl.getBoundingClientRect()
-      setPill({ left: lr.left - nr.left, width: lr.width })
+  // cached nav-link positions (relative to nav container)
+  const linkPositions = useRef<{ left: number; width: number }[]>([])
+
+  const recalcCache = useCallback(() => {
+    const nr = navRef.current?.getBoundingClientRect()
+    if (!nr) return
+    linkPositions.current = linkRefs.current.map(el => {
+      if (!el) return { left: 0, width: 0 }
+      const lr = el.getBoundingClientRect()
+      return { left: lr.left - nr.left, width: lr.width }
+    })
+    // also re-apply pill position after cache update
+    const idx = navLinks.findIndex(l => l.path === location.pathname)
+    if (idx >= 0) {
+      const pos = linkPositions.current[idx]
+      if (pos) setPill(pos)
     }
-  }, [])
+  }, [location.pathname])
+
+  useEffect(() => {
+    recalcCache()
+    const onResize = () => recalcCache()
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [recalcCache])
+
+  // detect closest section on scroll — uses cached nav positions, reads section rects
+  const updatePill = useCallback(() => {
+    const sy = window.scrollY
+    if (sy < 100) { setPill({ left: 0, width: 0 }); return }
+
+    const offset = sy + window.innerHeight * 0.3 + 72
+
+    let bestIdx = -1
+    let bestDist = Infinity
+    for (let i = 0; i < navLinks.length; i++) {
+      const el = document.getElementById(navLinks[i].section)
+      if (!el) continue
+      const { top } = el.getBoundingClientRect()
+      const dist = Math.abs(offset - (sy + top))
+      if (dist < bestDist) { bestDist = dist; bestIdx = i }
+    }
+
+    if (bestIdx < 0) { setPill({ left: 0, width: 0 }); return }
+
+    const pos = linkPositions.current[bestIdx]
+    if (pos && (pos.left !== pill.left || pos.width !== pill.width)) {
+      setPill(pos)
+    }
+  }, [pill])
 
   useMotionValueEvent(scrollY, 'change', () => {
     setScrolled(window.scrollY > 40)
-    updatePill()
+    if (!rafRef.current) {
+      rafRef.current = requestAnimationFrame(() => {
+        rafRef.current = 0
+        updatePill()
+      })
+    }
   })
-
-  useEffect(() => {
-    const onResize = () => updatePill()
-    window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
-  }, [updatePill])
 
   const handleClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, section: string, path: string) => {
     e.preventDefault()

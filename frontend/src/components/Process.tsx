@@ -24,14 +24,20 @@ export default function Process() {
   const titleInView = useInView(titleRef, { once: true, margin: '-100px' })
 
   const { scrollY } = useScroll()
+  const gridRectRef = useRef({ top: 0, bottom: 0 })
 
-  useMotionValueEvent(scrollY, 'change', () => {
+  useEffect(() => {
     const grid = gridRef.current
     if (!grid) return
+    const r = grid.getBoundingClientRect()
+    gridRectRef.current = { top: r.top + window.scrollY, bottom: r.bottom + window.scrollY }
+  }, [])
 
-    const rect = grid.getBoundingClientRect()
+  useMotionValueEvent(scrollY, 'change', () => {
+    const { top: gridTop, bottom: gridBottom } = gridRectRef.current
+    const sy = window.scrollY
 
-    if (rect.top > window.innerHeight || rect.bottom < 0) {
+    if (sy > gridBottom || sy + window.innerHeight < gridTop) {
       if (activeRef.current !== -1) {
         activeRef.current = -1
         setActiveIndex(-1)
@@ -40,7 +46,7 @@ export default function Process() {
     }
 
     const scrollEnd = 100
-    const scrolled = window.innerHeight - rect.top
+    const scrolled = window.innerHeight - (gridTop - sy)
     const progress = Math.max(0, Math.min(1, scrolled / (window.innerHeight - scrollEnd)))
     const idx = Math.min(steps.length - 1, Math.floor(progress * steps.length))
 
@@ -51,14 +57,11 @@ export default function Process() {
   })
 
   // Build path through card centers
-  const gridRectCached = useRef<DOMRect | null>(null)
-
   const buildPath = (idx: number) => {
     const grid = gridRef.current
     if (!grid || idx < 1) { setLinePath(''); return }
 
     const gridRect = grid.getBoundingClientRect()
-    gridRectCached.current = gridRect
 
     const cx = (i: number) => {
       const el = cardRefs.current[i]

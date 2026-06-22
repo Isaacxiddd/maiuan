@@ -8,7 +8,7 @@ const projects = [
     name: 'Guayafood',
     desc: 'Landing para delivery de comida casera. Diseño apetitoso, WhatsApp integrado, pedidos directos. Dueño cocina, nosotros le hicimos la web.',
     tags: ['React', 'Tailwind', 'WhatsApp API'],
-    image: '/guayafood-frame.jpg',
+    image: '/guayafood-frame.webp',
   },
 ]
 
@@ -43,7 +43,7 @@ export default function Portfolio() {
               className="rounded-xl border border-[var(--border)] overflow-hidden hover:border-white/25 transition-colors duration-300 flex flex-col"
             >
               <div className="h-28 shrink-0 overflow-hidden">
-                <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+                <img src={p.image} alt={p.name} loading="lazy" className="w-full h-full object-cover" />
               </div>
 
               <div className="p-4 flex flex-col flex-1">

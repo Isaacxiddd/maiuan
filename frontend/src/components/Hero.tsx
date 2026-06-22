@@ -7,6 +7,10 @@ export default function Hero() {
   const [videoLoaded, setVideoLoaded] = useState(false)
 
   useEffect(() => {
+    videoRef.current?.setAttribute('fetchpriority', 'high')
+  }, [])
+
+  useEffect(() => {
     const el = videoRef.current
     if (!el) return
     const ob = new IntersectionObserver(
@@ -140,7 +144,7 @@ export default function Hero() {
                 <video
                   ref={videoRef}
                   autoPlay muted loop playsInline
-                  poster="/guayafood-frame.jpg"
+                  poster="/guayafood-frame.webp"
                   preload={videoLoaded ? 'auto' : 'none'}
                   className="w-full h-auto block"
                 >

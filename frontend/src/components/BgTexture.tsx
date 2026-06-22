@@ -68,8 +68,14 @@ export default function BgTexture() {
       prevX = nx
     }
 
+    let hidden = false
+
+    const onVis = () => { hidden = document.hidden }
+    document.addEventListener('visibilitychange', onVis)
+
     const draw = () => {
       time += 0.008
+      if (hidden) { animId = requestAnimationFrame(draw); return }
       const mx = mouseRef.current.x
       const my = mouseRef.current.y
       const vel = mouseRef.current.v
@@ -106,6 +112,7 @@ export default function BgTexture() {
       cancelAnimationFrame(animId)
       window.removeEventListener('resize', resize)
       window.removeEventListener('mousemove', onMouse)
+      document.removeEventListener('visibilitychange', onVis)
     }
   }, [])
 
