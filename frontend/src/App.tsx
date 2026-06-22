@@ -1,7 +1,8 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Landing from './pages/Landing'
 import NotFound from './pages/NotFound'
+import { useSEO } from './hooks/useSEO'
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -14,9 +15,16 @@ const jsonLd = {
   ],
 }
 
+function SEOByRoute() {
+  const { pathname } = useLocation()
+  useSEO(pathname)
+  return null
+}
+
 export default function App() {
   return (
     <BrowserRouter>
+      <SEOByRoute />
       <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
       <Navbar />
       <Routes>

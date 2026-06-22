@@ -69,6 +69,16 @@ function AccordionItem({ q, a, isOpen, onToggle }: { q: string; a: string; isOpe
   )
 }
 
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(f => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+}
+
 export default function FAQ() {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
@@ -76,6 +86,7 @@ export default function FAQ() {
 
   return (
     <section id="faq" className="py-6 md:py-8">
+      <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
       <Container>
         <motion.div
           ref={ref}

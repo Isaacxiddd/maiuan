@@ -1,14 +1,39 @@
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion'
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import MaiuanLogo from './MaiuanLogo'
 
 const navLinks = [
-  { label: 'Servicios', path: '/servicios' },
-  { label: '¿Qué hacemos?', path: '/que-hacemos' },
-  { label: 'Trabajos', path: '/trabajos' },
-  { label: 'Contacto', path: '/contacto' },
+  { label: 'Servicios', path: '/servicios', section: 'servicios' },
+  { label: '¿Qué hacemos?', path: '/que-hacemos', section: 'proceso' },
+  { label: 'Trabajos', path: '/trabajos', section: 'portfolio' },
+  { label: 'Contacto', path: '/contacto', section: 'contacto' },
 ]
+
+function getActiveNavIndex(): number {
+  const scrollY = window.scrollY
+  const vh = window.innerHeight
+  const NAV_H = 72
+  const offset = scrollY + vh * 0.3 + NAV_H
+
+  let bestIdx = -1
+  let bestDist = Infinity
+
+  for (let i = 0; i < navLinks.length; i++) {
+    const el = document.getElementById(navLinks[i].section)
+    if (!el) continue
+    const rect = el.getBoundingClientRect()
+    const absTop = scrollY + rect.top
+    const dist = Math.abs(offset - absTop)
+    if (dist < bestDist) {
+      bestDist = dist
+      bestIdx = i
+    }
+  }
+
+  if (scrollY < 100) return -1
+  return bestIdx
+}
 
 export default function Navbar() {
   const location = useLocation()
@@ -22,7 +47,7 @@ export default function Navbar() {
   const currentPath = location.pathname
 
   const updatePill = useCallback(() => {
-    const idx = navLinks.findIndex(l => l.path === currentPath)
+    const idx = getActiveNavIndex()
     if (idx < 0) { setPill({ left: 0, width: 0 }); return }
     const linkEl = linkRefs.current[idx]
     const navEl = navRef.current
@@ -31,9 +56,12 @@ export default function Navbar() {
       const nr = navEl.getBoundingClientRect()
       setPill({ left: lr.left - nr.left, width: lr.width })
     }
-  }, [currentPath])
+  }, [])
 
-  useEffect(() => { updatePill() }, [updatePill])
+  useMotionValueEvent(scrollY, 'change', () => {
+    setScrolled(window.scrollY > 40)
+    updatePill()
+  })
 
   useEffect(() => {
     const onResize = () => updatePill()
@@ -41,13 +69,11 @@ export default function Navbar() {
     return () => window.removeEventListener('resize', onResize)
   }, [updatePill])
 
-  useMotionValueEvent(scrollY, 'change', (latest: number) => {
-    setScrolled(latest > 40)
-  })
-
-  const handleClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
+  const handleClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, section: string, path: string) => {
     e.preventDefault()
     if (currentPath !== path) navigate(path, { state: { nav: true } })
+    const el = document.getElementById(section)
+    if (el) el.scrollIntoView({ behavior: 'smooth' })
   }, [navigate, currentPath])
 
   const showPill = pill.width > 0
@@ -77,20 +103,20 @@ export default function Navbar() {
         >
           {showPill && (
             <motion.div
-              className="absolute top-0 bottom-0 rounded-full bg-white/10 pointer-events-none"
+              className="absolute top-0 bottom-0 rounded-full bg-[var(--accent)]/[0.12] pointer-events-none"
               animate={{ left: pill.left, width: pill.width }}
               transition={{ type: 'spring', stiffness: 350, damping: 30 }}
             />
           )}
 
-          {navLinks.map(({ label, path }, i) => {
+          {navLinks.map(({ label, section, path }, i) => {
             const isActive = currentPath === path
             return (
               <motion.a
                 key={path}
                 ref={el => { linkRefs.current[i] = el }}
                 href={path}
-                onClick={e => handleClick(e, path)}
+                onClick={e => handleClick(e, section, path)}
                 variants={{ hidden: { opacity: 0, y: -8 }, visible: { opacity: 1, y: 0 } }}
                 transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                 className={`relative z-10 px-5 py-1.5 text-sm font-medium rounded-full transition-all duration-300 ${
