@@ -154,6 +154,7 @@ export default function Process() {
                 <span
                   className="text-[2rem] font-extrabold leading-none block transition-colors duration-700"
                   style={{ color: i <= activeIndex ? GREEN : 'rgba(255,255,255,0.05)' }}
+                  aria-hidden="true"
                 >
                   {s.n}
                 </span>
