@@ -3,7 +3,25 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react(),
+    tailwindcss(),
+    {
+      name: 'inject-lcp',
+      enforce: 'post',
+      transformIndexHtml(html) {
+        return html
+          .replace(
+            '<link rel="preload" as="image" href="/guayafood-frame.webp">',
+            '<link rel="preload" as="image" href="/guayafood-frame.webp" fetchpriority="high">',
+          )
+          .replace(
+            '<div id="root"></div>',
+            `<div id="root"><img src="/guayafood-frame.webp" alt="" style="width:100%;display:block;height:auto;aspect-ratio:640/292;background:#080808" /></div>`,
+          )
+      },
+    },
+  ],
   server: { port: 5173 },
   build: {
     rollupOptions: {

@@ -105,17 +105,18 @@ export default function Contact() {
               onSubmit={handleSubmit(onSubmit)}
               className="flex flex-col gap-2"
               noValidate
+              data-mcp-tool="contact"
             >
               <div>
-                <input {...register('name')} placeholder="Tu nombre" className={inputClass} />
+                <input {...register('name')} placeholder="Tu nombre" className={inputClass} data-mcp-param="name" />
                 {errors.name && <p className="text-red-400 text-xs mt-1 ml-1">{errors.name.message}</p>}
               </div>
               <div>
-                <input {...register('email')} type="email" placeholder="Tu email" className={inputClass} />
+                <input {...register('email')} type="email" placeholder="Tu email" className={inputClass} data-mcp-param="email" />
                 {errors.email && <p className="text-red-400 text-xs mt-1 ml-1">{errors.email.message}</p>}
               </div>
               <div>
-                <input {...register('rubro')} placeholder="Tu rubro o negocio" className={inputClass} />
+                <input {...register('rubro')} placeholder="Tu rubro o negocio" className={inputClass} data-mcp-param="rubro" />
                 {errors.rubro && <p className="text-red-400 text-xs mt-1 ml-1">{errors.rubro.message}</p>}
               </div>
               <div>
@@ -123,7 +124,7 @@ export default function Contact() {
                   {...register('message')}
                   placeholder="¿Qué necesitás?"
                   rows={3}
-                  className={`${inputClass} resize-none`}
+                  className={`${inputClass} resize-none`} data-mcp-param="message"
                 />
                 {errors.message && <p className="text-red-400 text-xs mt-1 ml-1">{errors.message.message}</p>}
               </div>

@@ -1,0 +1,21 @@
+# maiuan
+
+> Landing pages que convierten visitantes en clientes. Diseñamos tu presencia digital en Buenos Aires.
+
+## Páginas principales
+
+- [Inicio](https://maiuan.com/): Hero con video teaser, propuesta de valor y CTA a WhatsApp
+- [Servicios](https://maiuan.com/servicios): Landing page, web corporativa, e-commerce, SEO técnico, branding, fotografía, edición de video
+- [Qué hacemos](https://maiuan.com/que-hacemos): Metodología paso a paso para crear presencia digital
+- [Trabajos](https://maiuan.com/trabajos): Portafolio de proyectos realizados
+- [Contacto](https://maiuan.com/contacto): Formulario de contacto y WhatsApp directo
+
+## Redes
+
+- [Instagram](https://instagram.com/maiuan.ar): Contenido visual y casos de estudio
+- [LinkedIn](https://linkedin.com/company/maiuan): Presencia profesional y actualizaciones
+
+## Optional
+
+- [Preguntas frecuentes](https://maiuan.com/faq): FAQ sobre diseño web y contratación
+- [Política de Privacidad](https://maiuan.com/privacy): Tratamiento de datos personales
